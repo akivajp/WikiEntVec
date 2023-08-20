@@ -15,6 +15,13 @@ class BaseTokenizer(object):
             split_texts = self.preserved_pattern.split(text)
             matched_texts = \
                 [m.group(0) for m in self.preserved_pattern.finditer(text)] + [None]
+            #import sys
+            #print(f'text: {text}')
+            #print(f'split_texts: {split_texts}')
+            #print(f'matched_texts: {matched_texts}')
+            #print(f'len split_texts: {len(split_texts)}')
+            #print(f'len matched_texts: {len(matched_texts)}')
+            #sys.exit(1)
             assert len(split_texts) == len(matched_texts)
             for (split_text, matched_text) in zip(split_texts, matched_texts):
                 if self.do_lower_case:

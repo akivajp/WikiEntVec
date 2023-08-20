@@ -10,7 +10,8 @@ from gensim.models.word2vec import LineSentence, Word2Vec
 logger_word2vec = logzero.setup_logger(name='gensim.models.word2vec')
 logger_base_any2vec = logzero.setup_logger(name='gensim.models.base_any2vec')
 
-regex_entity = re.compile(r'##[^#]+?##')
+#regex_entity = re.compile(r'##[^#]+?##')
+regex_entity = re.compile(r'##[^#]+?(?:##[^#]+)?##')
 
 
 def main(args):
@@ -24,6 +25,7 @@ def main(args):
     logger.info('training the model')
     model = Word2Vec(sentences=LineSentence(args.corpus_file),
                      size=args.embed_size,
+                     #vector_size=args.embed_size,
                      window=args.window_size,
                      negative=args.sample_size,
                      min_count=args.min_count,
@@ -31,6 +33,7 @@ def main(args):
                      sg=1,
                      hs=0,
                      iter=args.epoch)
+                     #epochs=args.epoch)
 
     word_vocab_size = 0
     entity_vocab_size = 0

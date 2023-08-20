@@ -12,7 +12,9 @@ from tokenization import RegExpTokenizer, NLTKTokenizer, MeCabTokenizer
 regex_spaces = re.compile(r'\s+')
 regex_title_paren = re.compile(r' \([^()].+?\)$')
 regex_hyperlink = re.compile(r'\[\[(.+?)\]\]')
-regex_entity = re.compile(r'##[^#]+?##')
+#regex_entity = re.compile(r'##[^#]+?##')
+regex_entity = re.compile(r'##[^#]+?(?:##[^#]+)?##')
+#regex_entity = re.compile(r'##[^#]+?(%%[^#]+)?##')
 
 
 def main(args):
@@ -93,7 +95,11 @@ def main(args):
                     start = text.index(anchor, cursor)
                     end = start + len(anchor)
                     if not any(replacement_flags[start:end]):
-                        entity_token = f'##{entity}##'.replace(' ', '_')
+                        if args.tag:
+                            #entity_token = f'##{entity}%%{args.tag}##'.replace(' ', '_')
+                            entity_token = f'##{entity}##{args.tag}##'.replace(' ', '_')
+                        else:
+                            entity_token = f'##{entity}##'.replace(' ', '_')
                         text = text[:start] + entity_token + text[end:]
                         replacement_flags = replacement_flags[:start] \
                             + [1] * len(entity_token) + replacement_flags[end:]
@@ -133,5 +139,7 @@ if __name__ == "__main__":
         help='resolve redirects of entity names')
     parser.add_argument('--tokenizer_option', type=str, default='',
         help='option string passed to the tokenizer')
+    parser.add_argument('--tag', type=str, default='',
+        help='additional tag for entity expression')
     args = parser.parse_args()
     main(args)
